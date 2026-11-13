@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<!-- Declaración del estándar HTML5 -->
+<html lang="es">
+<head>
+    <!-- Configuración de caracteres especiales y diseño adaptable -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desarrollo Personal - Librería Lectura Viva</title>
+    
+    <!-- Fuentes tipográficas -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- HOJA DE ESTILOS CSS -->
+    <style>
+        :root {
+            --cafe-marron: #2c1810;
+            --crema-fondo: #fcfbf7;
+            --texto-oscuro: #1c1917;
+            --blanco: #ffffff;
+            --borde-tarjeta: #e7e5e4;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--crema-fondo);
+            color: var(--texto-oscuro);
+        }
+
+        /* 1. ENCABEZADO */
+        header {
+            background-color: var(--cafe-marron);
+            color: var(--blanco);
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Merriweather', serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #fef08a;
+            text-decoration: none;
+        }
+
+        .busqueda input {
+            padding: 9px 18px;
+            border-radius: 20px;
+            border: none;
+            outline: none;
+            width: 300px;
+            font-size: 14px;
+        }
+
+        .user-nav a {
+            color: var(--blanco);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            background-color: #441a0e;
+            padding: 8px 16px;
+            border-radius: 6px;
+        }
+
+        /* 2. BARRA DE NAVEGACIÓN */
+        nav {
+            background-color: var(--blanco);
+            padding: 14px 40px;
+            border-bottom: 1px solid var(--borde-tarjeta);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 35px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--texto-oscuro);
+            font-weight: 600;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        nav a:hover, nav a.activo {
+            color: #b45309;
+            border-bottom: 2px solid #b45309;
+            padding-bottom: 4px;
+        }
+
+        /* 3. CUERPO PRINCIPAL */
+        main {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .banner-categoria {
+            background: linear-gradient(rgba(44, 24, 16, 0.8), rgba(44, 24, 16, 0.8)), 
+                        url('https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1200') center/cover;
+            padding: 40px;
+            border-radius: 12px;
+            color: var(--blanco);
+            margin-bottom: 35px;
+        }
+
+        .banner-categoria h1 {
+            font-family: 'Merriweather', serif;
+            font-size: 32px;
+            margin-bottom: 8px;
+            color: #fef08a;
+        }
+
+        .titulo-seccion {
+            font-family: 'Merriweather', serif;
+            font-size: 24px;
+            margin-bottom: 25px;
+            color: var(--cafe-marron);
+            border-bottom: 2px solid #e7e5e4;
+            padding-bottom: 8px;
+        }
+
+        .grid-libros {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .tarjeta-libro {
+            background: var(--blanco);
+            border: 1px solid var(--borde-tarjeta);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.03);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tarjeta-libro:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .tarjeta-libro img {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+        }
+
+        .info-libro {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+
+        .info-libro h3 {
+            font-family: 'Merriweather', serif;
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: var(--cafe-marron);
+        }
+
+        .info-libro .autor {
+            font-size: 13px;
+            color: #78716c;
+            margin-bottom: 8px;
+        }
+
+        .info-libro .categoria {
+            display: inline-block;
+            font-size: 11px;
+            background-color: #dcfce7;
+            color: #166534;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .info-libro .precio {
+            font-size: 18px;
+            font-weight: 700;
+            color: #9a3412;
+            margin-bottom: 12px;
+        }
+
+        .btn-comprar {
+            display: block;
+            width: 100%;
+            background-color: var(--cafe-marron);
+            color: white;
+            text-align: center;
+            padding: 10px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .btn-comprar:hover {
+            background-color: #441a0e;
+        }
+
+        /* 4. PIE DE PÁGINA */
+        footer {
+            background-color: var(--cafe-marron);
+            color: white;
+            padding: 40px 20px 20px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-col h4 {
+            font-family: 'Merriweather', serif;
+            font-size: 15px;
+            margin-bottom: 15px;
+            color: #fef08a;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col a {
+            color: #d6d3d1;
+            text-decoration: none;
+            font-size: 13px;
+            line-height: 2;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #441a0e;
+            font-size: 12px;
+            color: #a8a29e;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ENCABEZADO -->
+    <header>
+        <a href="index.php" class="logo">📖 Lectura Viva</a>
+        <div class="busqueda">
+            <input type="text" placeholder="Buscar dentro de Desarrollo Personal...">
+        </div>
+        <div class="user-nav">
+            <a href="index.php#acceso">Mi Cuenta / Registro</a>
+        </div>
+    </header>
+
+    <!-- BARRA DE NAVEGACIÓN -->
+    <nav>
+        <ul>
+            <li><a href="index.php">Inicio</a></li>
+            <li><a href="novelas.html">Novelas</a></li>
+            <li><a href="ciencia_ficcion.html">Ciencia Ficción</a></li>
+            <!-- Enlace activo en Desarrollo Personal -->
+            <li><a href="desarrollo_personal.html" class="activo">Desarrollo Personal</a></li>
+            <li><a href="index.php#acceso">Iniciar Sesión</a></li>
+        </ul>
+    </nav>
+
+    <!-- CUERPO PRINCIPAL -->
+    <main>
+        <!-- Banner de la categoría -->
+        <section class="banner-categoria">
+            <h1>Crecimiento y Desarrollo Personal</h1>
+            <p>Herramientas prácticas, psicología y hábitos efectivos para potenciar tu productividad y bienestar.</p>
+        </section>
+
+        <!-- Catálogo de libros de Desarrollo Personal -->
+        <section>
+            <h2 class="titulo-seccion">Títulos Disponibles en Desarrollo Personal</h2>
+
+            <div class="grid-libros">
+                <!-- Libro 1 -->
+                <article class="tarjeta-libro">
+                    <img src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=500" alt="Hábitos Atómicos">
+                    <div class="info-libro">
+                        <div>
+                            <h3>Hábitos Atómicos</h3>
+                            <p class="autor">James Clear</p>
+                            <span class="categoria">Desarrollo Personal</span>
+                        </div>
+                        <div>
+                            <p class="precio">$389.00 MXN</p>
+                            <a href="#" class="btn-comprar">Agregar al Carrito</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Libro 2 -->
+                <article class="tarjeta-libro">
+                    <img src="https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?w=500" alt="El Poder del Ahora">
+                    <div class="info-libro">
+                        <div>
+                            <h3>El Poder del Ahora</h3>
+                            <p class="autor">Eckhart Tolle</p>
+                            <span class="categoria">Desarrollo Personal</span>
+                        </div>
+                        <div>
+                            <p class="precio">$319.00 MXN</p>
+                            <a href="#" class="btn-comprar">Agregar al Carrito</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Libro 3 -->
+                <article class="tarjeta-libro">
+                    <img src="https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=500" alt="Cómo Ganar Amigos">
+                    <div class="info-libro">
+                        <div>
+                            <h3>Cómo Ganar Amigos e Influir sobre las Personas</h3>
+                            <p class="autor">Dale Carnegie</p>
+                            <span class="categoria">Desarrollo Personal</span>
+                        </div>
+                        <div>
+                            <p class="precio">$289.00 MXN</p>
+                            <a href="#" class="btn-comprar">Agregar al Carrito</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Libro 4 -->
+                <article class="tarjeta-libro">
+                    <img src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=500" alt="Piense y Hágase Rico">
+                    <div class="info-libro">
+                        <div>
+                            <h3>Piense y Hágase Rico</h3>
+                            <p class="autor">Napoleon Hill</p>
+                            <span class="categoria">Desarrollo Personal</span>
+                        </div>
+                        <div>
+                            <p class="precio">$249.00 MXN</p>
+                            <a href="#" class="btn-comprar">Agregar al Carrito</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-col">
+                <h4>Nuestras Librerías</h4>
+                <ul>
+                    <li><a href="#">Sucursales</a></li>
+                    <li><a href="#">Club de Lectura</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Servicio al Cliente</h4>
+                <ul>
+                    <li><a href="#">Estado de tu envío</a></li>
+                    <li><a href="#">Términos y condiciones</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Acerca de Lectura Viva</h4>
+                <ul>
+                    <li><a href="#">Quiénes Somos</a></li>
+                    <li><a href="#">Blog Literario</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Librería Lectura Viva S.A. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+</body>
+  </html>
