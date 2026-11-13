@@ -330,4 +330,230 @@ $libros_destacados = $conn->query("SELECT * FROM libros WHERE id IN (1, 2, 3, 4)
             <h2>🛒 Tu Carrito de Libros</h2>
             <button type="button" class="btn-cerrar-carrito" onclick="cerrarTodo()">&times;</button>
         </div>
-        <div id="carrito-lista" 
+        <div id="carrito-lista"-header">
+            <h2>🛒 Tu Carrito de Libros</h2>
+            <button type="button" class="btn-cerrar-carrito" onclick="cerrarTodo()">&times;</button>
+        </div>
+        <div id="carrito-lista" class="carrito-lista">
+            <p class="carrito-vacio">Tu carrito está vacío. ¡Agrega un libro para comenzar!</p>
+        </div>
+        <div class="carrito-footer">
+            <div class="fila-total"><span>Subtotal:</span><span id="carrito-subtotal">$0.00 MXN</span></div>
+            <div class="fila-total"><span>Envío:</span><span id="carrito-envio">$0.00 MXN</span></div>
+            <div class="fila-total final"><span>Total a Pagar:</span><span id="carrito-total">$0.00 MXN</span></div>
+            <button type="button" id="btn-proceder-pago" class="btn-proceder-pago" onclick="abrirModalPago()" disabled>Proceder al Pago</button>
+        </div>
+    </aside>
+
+    <div id="modal-pago" class="modal-pago">
+        <div class="modal-header">
+            <h2>💳 Finalizar Compra</h2>
+            <button type="button" class="btn-cerrar-carrito" style="color: #1c1917;" onclick="cerrarTodo()">&times;</button>
+        </div>
+        <form id="form-pago" onsubmit="procesarPago(event)">
+            <div class="campo"><label for="pago-nombre">Nombre del Titular / Destinatario</label><input type="text" id="pago-nombre" required></div>
+            <div class="campo"><label for="pago-direccion">Dirección de Envío Completa</label><input type="text" id="pago-direccion" required></div>
+            <div class="campo">
+                <label for="pago-metodo">Método de Pago</label>
+                <select id="pago-metodo">
+                    <option value="tarjeta">Tarjeta de Crédito / Débito</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="transferencia">Transferencia SPEI</option>
+                </select>
+            </div>
+            <div class="campo"><label for="pago-tarjeta">Número de Tarjeta (16 dígitos)</label><input type="text" id="pago-tarjeta" maxlength="19" required></div>
+            <div class="fila-doble">
+                <div class="campo"><label for="pago-exp">Expiración (MM/AA)</label><input type="text" id="pago-exp" maxlength="5" placeholder="08/29" required></div>
+                <div class="campo"><label for="pago-cvv">Código CVV</label><input type="password" id="pago-cvv" maxlength="4" required></div>
+            </div>
+            <div class="fila-total final" style="margin-bottom: 15px;"><span>Total a Cobrar:</span><span id="modal-total-pagar">$0.00 MXN</span></div>
+            <button type="submit" id="btn-confirmar-pago" class="btn-proceder-pago">Confirmar y Pagar Ahora</button>
+        </form>
+        <div id="recibo-exito" class="recibo-exito">
+            <h3>✅ ¡Compra Realizada con Éxito!</h3>
+            <p>Gracias por comprar en <strong>Librería Lectura Viva</strong>.</p>
+            <div class="folio-caja">Folio de Pedido: #<span id="numero-folio">000001</span></div>
+            <button type="button" class="btn-enviar" onclick="cerrarTodo()">Seguir Explorando Libros</button>
+        </div>
+    </div>
+
+    <div id="toast-notificacion" class="toast-notificacion">Libro agregado al carrito</div>
+
+    <!-- PIE DE PÁGINA CON DATOS DEL ALUMNO -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-col">
+                <h4>Datos del Alumno</h4>
+                <ul style="color: #d6d3d1; font-size: 13px; line-height: 1.9;">
+                    <li><strong>Nombre:</strong> [Escribe aquí tu Nombre Completo]</li>
+                    <li><strong>Matrícula / No. Control:</strong> [Escribe tu Matrícula]</li>
+                    <li><strong>Grupo y Semestre:</strong> [Ej. 5° Semestre - Grupo A]</li>
+                    <li><strong>Materia:</strong> Programación Web / Desarrollo de Sitios Web</li>
+                    <li><strong>Institución:</strong> [Nombre de tu Escuela o Universidad]</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Categorías de Libros</h4>
+                <ul>
+                    <li><a href="index.php">Inicio</a></li>
+                    <li><a href="novelas.html">Novelas</a></li>
+                    <li><a href="ciencia_ficcion.html">Ciencia Ficción</a></li>
+                    <li><a href="desarrollo_personal.html">Desarrollo Personal</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Acerca del Proyecto</h4>
+                <p style="color: #d6d3d1; font-size: 13px; line-height: 1.7; max-width: 280px;">
+                    Sitio web de comercio electrónico con carrito funcional en JavaScript y conexión a base de datos MySQL mediante PHP.
+                </p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Librería Lectura Viva — Proyecto Académico desarrollado por [Tu Nombre Completo].</p>
+        </div>
+    </footer>
+
+    <script>
+        let carrito = JSON.parse(localStorage.getItem('carrito_lectura_viva')) || [];
+        document.addEventListener('DOMContentLoaded', () => renderizarCarrito());
+
+        function agregarAlCarrito(id, titulo, precio, imagen) {
+            const libroExistente = carrito.find(item => item.id === id);
+            if (libroExistente) libroExistente.cantidad += 1;
+            else carrito.push({ id, titulo, precio, imagen, cantidad: 1 });
+            guardarYActualizar();
+            mostrarNotificacion(`"${titulo}" agregado al carrito`);
+        }
+
+        function cambiarCantidad(id, cambio) {
+            const libro = carrito.find(item => item.id === id);
+            if (!libro) return;
+            libro.cantidad += cambio;
+            if (libro.cantidad <= 0) eliminarDelCarrito(id);
+            else guardarYActualizar();
+        }
+
+        function eliminarDelCarrito(id) {
+            carrito = carrito.filter(item => item.id !== id);
+            guardarYActualizar();
+        }
+
+        function guardarYActualizar() {
+            localStorage.setItem('carrito_lectura_viva', JSON.stringify(carrito));
+            renderizarCarrito();
+        }
+
+        function renderizarCarrito() {
+            const contenedorLista = document.getElementById('carrito-lista');
+            const badgeContador = document.getElementById('contador-carrito');
+            const elSubtotal = document.getElementById('carrito-subtotal');
+            const elEnvio = document.getElementById('carrito-envio');
+            const elTotal = document.getElementById('carrito-total');
+            const btnPagar = document.getElementById('btn-proceder-pago');
+
+            badgeContador.textContent = carrito.reduce((acum, item) => acum + item.cantidad, 0);
+
+            if (carrito.length === 0) {
+                contenedorLista.innerHTML = '<p class="carrito-vacio">Tu carrito está vacío. ¡Agrega un libro para comenzar!</p>';
+                elSubtotal.textContent = '$0.00 MXN';
+                elEnvio.textContent = '$0.00 MXN';
+                elTotal.textContent = '$0.00 MXN';
+                btnPagar.disabled = true;
+                return;
+            }
+
+            let htmlItems = '';
+            let subtotal = 0;
+            carrito.forEach(item => {
+                const totalItem = item.precio * item.cantidad;
+                subtotal += totalItem;
+                htmlItems += `
+                    <div class="item-carrito">
+                        <img src="${item.imagen}" alt="${item.titulo}">
+                        <div class="item-detalles">
+                            <h4>${item.titulo}</h4>
+                            <p class="item-precio">$${totalItem.toFixed(2)} MXN</p>
+                            <div class="controles-cantidad">
+                                <button type="button" class="btn-qty" onclick="cambiarCantidad(${item.id}, -1)">-</button>
+                                <span>${item.cantidad}</span>
+                                <button type="button" class="btn-qty" onclick="cambiarCantidad(${item.id}, 1)">+</button>
+                                <button type="button" class="btn-eliminar-item" onclick="eliminarDelCarrito(${item.id})">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            contenedorLista.innerHTML = htmlItems;
+
+            const costoEnvio = subtotal >= 500 ? 0 : 59;
+            const totalFinal = subtotal + costoEnvio;
+            elSubtotal.textContent = `$${subtotal.toFixed(2)} MXN`;
+            elEnvio.textContent = costoEnvio === 0 ? 'GRATIS' : `$${costoEnvio.toFixed(2)} MXN`;
+            elTotal.textContent = `$${totalFinal.toFixed(2)} MXN`;
+            btnPagar.disabled = false;
+        }
+
+        function abrirCarrito() {
+            document.getElementById('panel-carrito').classList.add('abierto');
+            document.getElementById('overlay-oscuro').classList.add('activo');
+        }
+
+        function abrirModalPago() {
+            document.getElementById('panel-carrito').classList.remove('abierto');
+            document.getElementById('modal-pago').classList.add('activo');
+            document.getElementById('overlay-oscuro').classList.add('activo');
+            document.getElementById('form-pago').style.display = 'block';
+            document.getElementById('recibo-exito').style.display = 'none';
+            document.getElementById('modal-total-pagar').textContent = document.getElementById('carrito-total').textContent;
+        }
+
+        function cerrarTodo() {
+            document.getElementById('panel-carrito').classList.remove('abierto');
+            document.getElementById('modal-pago').classList.remove('activo');
+            document.getElementById('overlay-oscuro').classList.remove('activo');
+        }
+
+        function procesarPago(evento) {
+            evento.preventDefault();
+            const btnConfirmar = document.getElementById('btn-confirmar-pago');
+            btnConfirmar.textContent = "Procesando pago...";
+            btnConfirmar.disabled = true;
+
+            const subtotal = carrito.reduce((acum, item) => acum + (item.precio * item.cantidad), 0);
+            const totalFinal = subtotal + (subtotal >= 500 ? 0 : 59);
+
+            fetch('procesar_compra.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    cliente: document.getElementById('pago-nombre').value,
+                    direccion: document.getElementById('pago-direccion').value,
+                    metodo: document.getElementById('pago-metodo').value,
+                    total: totalFinal,
+                    items: carrito
+                })
+            })
+            .then(res => res.json())
+            .then(data => finalizarVistaCompra(data.folio || Math.floor(100000 + Math.random() * 900000)))
+            .catch(() => finalizarVistaCompra(Math.floor(100000 + Math.random() * 900000)))
+            .finally(() => { btnConfirmar.textContent = "Confirmar y Pagar Ahora"; btnConfirmar.disabled = false; });
+        }
+
+        function finalizarVistaCompra(folio) {
+            carrito = [];
+            guardarYActualizar();
+            document.getElementById('form-pago').reset();
+            document.getElementById('form-pago').style.display = 'none';
+            document.getElementById('numero-folio').textContent = folio;
+            document.getElementById('recibo-exito').style.display = 'block';
+        }
+
+        function mostrarNotificacion(mensaje) {
+            const toast = document.getElementById('toast-notificacion');
+            toast.textContent = mensaje;
+            toast.classList.add('mostrar');
+            setTimeout(() => toast.classList.remove('mostrar'), 2500);
+        }
+    </script>
+</body>
+</html>
